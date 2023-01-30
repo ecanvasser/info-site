@@ -9,21 +9,31 @@ http
 
     if (reqPath.pathname === "/" || reqPath.pathname === "/favicon.ico") {
       fs.readFile("index.html", "utf8", (err, data) => {
-        if (err) throw err;
-        res.write(data);
-        res.end();
+        if (err) {
+          res.writeHead(500, { "Content-Type": "text/plain" });
+          res.end("Error reading index.html");
+        } else {
+          res.write(data);
+          res.end();
+        }
       });
     } else {
       fs.readFile(fileName, "utf8", (err, data) => {
         if (err) {
           fs.readFile("./404.html", (err, data) => {
-            if (err) throw err;
-            res.write(data);
-            res.end();
+            if (err) {
+              res.writeHead(500, { "Content-Type": "text/plain" });
+              res.end("Error reading 404.html");
+            } else {
+              res.writeHead(404, { "Content-Type": "text/html" });
+              res.write(data);
+              res.end();
+            }
           });
+        } else {
+          res.write(data);
+          res.end();
         }
-        res.write(data);
-        res.end();
       });
     }
   })
